@@ -25,7 +25,30 @@ function Dashboard() {
         teachingHours: 4,
         targetHours: 10,
 },
-};
+}
+const recommendedMatches = [
+    {
+        id: 1,
+        name: "Alex Morgan",
+        teaches: ["React", "JavaScript"],
+        wantsToLearn: ["UI/UX Design"],
+        compatibility: 92,
+    },
+    {
+        id: 2,
+        name: "Jordan Lee",
+        teaches: ["UI/UX Design", "Figma"],
+        wantsToLearn: ["React"],
+        compatibility: 87,
+    },
+    {
+        id: 3,
+        name: "Taylor Smith",
+        teaches: ["Python", "Data Analysis"],
+        wantsToLearn: ["JavaScript"],
+        compatibility: 81,
+    },
+];;
 
     return (
         <div className="dashboard">
@@ -183,8 +206,48 @@ function Dashboard() {
     </div>
 
 </section>
+<section className="recommended-matches">
+  <div className="section-heading">
+    <span className="section-label">RECOMMENDED FOR YOU</span>
+    <button type="button" className="view-all-button">
+      View All
+    </button>
+  </div>
+
+  <div className="matches-grid">
+    {recommendedMatches.map((match) => (
+      <div className="match-card" key={match.id}>
+        <h3>{match.name}</h3>
+
+        <p className="match-skills">
+          <strong>Can teach:</strong> {match.teaches.join(", ")}
+        </p>
+
+        <p className="match-skills">
+          <strong>Wants to learn:</strong> {match.wantsToLearn.join(", ")}
+        </p>
+
+        <div className="match-compatibility">
+          <span>Compatibility</span>
+          <strong>{match.compatibility}%</strong>
         </div>
-    );
+
+        <div className="match-progress-bar">
+          <div
+            className="match-progress-fill"
+            style={{ width: `${match.compatibility}%` }}
+          ></div>
+        </div>
+
+        <button type="button" className="view-profile-button">
+          View Profile
+        </button>
+      </div>
+    ))}
+  </div>
+</section>
+</div>
+);
 }
 
 export default Dashboard;
