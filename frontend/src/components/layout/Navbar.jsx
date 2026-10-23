@@ -9,7 +9,7 @@ function Navbar({activePage, setActivePage}) {
 const navLinks = currentUser
     ? [
         { id: "dashboard", label: "Dashboard" },
-        { id: "match", label: "Matches" },
+        { id: "matches", label: "Matches" },
         { id: "messages", label: "Messages" }
     ]
     : [
