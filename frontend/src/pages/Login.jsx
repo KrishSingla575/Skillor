@@ -115,7 +115,7 @@ export default function Login({
 
     setIsLoading(true);
 
-    // Simulate authenticating/registering with a smooth feedback delay
+
     setTimeout(() => {
       setIsLoading(false);
       const authenticatedUser = {
@@ -175,15 +175,9 @@ export default function Login({
           title="Return to Skillor Home"
         >
           <img src={logoLight} alt="Skillor Logo" className="glass-logo-img" />
-          {/* <span className="glass-logo-badge">Peer-to-Peer</span> */}
         </div>
 
         <div className="glass-topbar-actions">
-          {/* <div className="glass-trust-pill">
-            <ShieldCheck size={16} className="trust-icon" />
-            <span>256-Bit SSL Encrypted</span>
-          </div> */}
-
           <button
             type="button"
             className="glass-back-btn"
@@ -243,28 +237,6 @@ export default function Login({
             </button>
           </div>
 
-          {/* Quick Demo Pre-fills */}
-          {/* <div className="glass-demo-bar">
-            <span className="demo-label">⚡ 1-Click Demo:</span>
-            <button
-              type="button"
-              className="glass-demo-pill"
-              onClick={() => handleQuickDemo("learner")}
-              title="Autofill as Learner (Alex Morgan)"
-            >
-              Learner
-            </button>
-            <button
-              type="button"
-              className="glass-demo-pill"
-              onClick={() => handleQuickDemo("mentor")}
-              title="Autofill as Senior Mentor (Rahul Sharma)"
-            >
-              Mentor
-            </button>
-          </div> */}
-
-          {/* Alert Error / Success feedback */}
           {errorMsg && (
             <div className="glass-alert-box error" role="alert">
               <AlertCircle size={18} className="alert-icon" />
@@ -631,8 +603,7 @@ export default function Login({
       {/* Glass Footer Bar */}
       <footer className="glass-bottom-bar">
         <p className="glass-footer-copy">
-          © {new Date().getFullYear()} Skillor • Learn. Share. Grow. {/*Peer-to-Peer
-          Skill Marketplace */}
+          © {new Date().getFullYear()} Skillor • Learn. Share. Grow.
         </p>
         <div className="glass-footer-links">
           <span

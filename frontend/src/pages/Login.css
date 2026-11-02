@@ -1,9 +1,3 @@
-/* ==========================================================================
-   SKILLOR LOGIN / REGISTER - GLASSMORPHISM UI
-   Uses login_bg.png as background with authentic frosted glass cards & controls
-   ========================================================================== */
-
-/* Main Fullpage Container */
 .login-page-container {
   position: relative;
   min-height: 100vh;
@@ -23,7 +17,7 @@
   box-sizing: border-box;
 }
 
-/* Subtle backdrop darkening/vignette to ensure text clarity over all areas of login_bg.png */
+
 .login-backdrop-overlay {
   position: absolute;
   inset: 0;
@@ -39,7 +33,7 @@
   z-index: 1;
 }
 
-/* Decorative Ambient Glowing Orbs behind the Glass */
+
 .glass-ambient-orb {
   position: absolute;
   border-radius: 50%;
@@ -89,9 +83,6 @@
   100% { transform: translate(30px, -40px) scale(0.92); }
 }
 
-/* ==========================================================================
-   TOP GLASS NAVIGATION BAR
-   ========================================================================== */
 .glass-topbar {
   position: relative;
   z-index: 10;
@@ -733,9 +724,6 @@
   color: #ffffff;
 }
 
-/* ==========================================================================
-   GLASS BOTTOM FOOTER BAR
-   ========================================================================== */
 .glass-bottom-bar {
   position: relative;
   z-index: 10;
@@ -778,9 +766,7 @@
   opacity: 0.4;
 }
 
-/* ==========================================================================
-   FORGOT PASSWORD GLASS MODAL
-   ========================================================================== */
+
 .glass-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -927,9 +913,6 @@
   margin-top: 16px;
 }
 
-/* ==========================================================================
-   RESPONSIVE QUERIES
-   ========================================================================== */
 @media (max-width: 640px) {
   .login-page-container {
     padding: 0 12px;
