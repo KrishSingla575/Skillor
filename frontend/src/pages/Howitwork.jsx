@@ -156,7 +156,7 @@ function HowToWork({ setActivePage }) {
     <div className="how-page" id="howitwork-root">
       <section className="how-hero" aria-label="How Skillor Works Hero">
         <div className="hero-pill-badge">
-          SIMPLE • FAIR • ZERO DOLLARS • THE 6-STEP EXCHANGE BLUEPRINT
+          SIMPLE • FAIR • ZERO Charge • THE 6-STEP EXCHANGE BLUEPRINT
         </div>
 
         <div className="hero-kicker-row">

@@ -14,7 +14,6 @@ import {
   Scale,
   Globe,
   Users,
-  Award,
   ArrowLeftRight,
   Cpu,
   Compass,
@@ -38,7 +37,6 @@ const MATCH_SCENARIOS = [
       avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=240&q=80",
       rating: "4.97",
       trades: "48 trades",
-      badge: "Verified Mentor",
       teaches: ["Swift & SwiftUI", "System Arch."],
       wants: ["Figma Design Systems", "Micro-Interactions"],
       status: "Active Today • 18 Trades"
@@ -49,7 +47,6 @@ const MATCH_SCENARIOS = [
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=240&q=80",
       rating: "4.99",
       trades: "64 trades",
-      badge: "Super Peer",
       teaches: ["UI Design Systems", "Motion Graphic"],
       wants: ["Swift & SwiftUI", "Backend Basics"],
       status: "Active Today • 24 Trades"
@@ -66,7 +63,6 @@ const MATCH_SCENARIOS = [
       avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=240&q=80",
       rating: "4.92",
       trades: "39 trades",
-      badge: "Verified Mentor",
       teaches: ["Product Growth", "SEO Strategy"],
       wants: ["Python for Data", "LLM Prompting"],
       status: "Active Today • 15 Trades"
@@ -77,7 +73,6 @@ const MATCH_SCENARIOS = [
       avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=240&q=80",
       rating: "4.95",
       trades: "52 trades",
-      badge: "Top Rated",
       teaches: ["PyTorch & AI", "Python Scripting"],
       wants: ["B2B Acquisition", "Product Growth"],
       status: "Active Today • 31 Trades"
@@ -94,7 +89,6 @@ const MATCH_SCENARIOS = [
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=240&q=80",
       rating: "4.96",
       trades: "41 trades",
-      badge: "Super Peer",
       teaches: ["Design Tokens", "Figma Auto-Layout"],
       wants: ["React Component Arch", "Next.js 15"],
       status: "Active Today • 22 Trades"
@@ -105,7 +99,6 @@ const MATCH_SCENARIOS = [
       avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=240&q=80",
       rating: "4.98",
       trades: "58 trades",
-      badge: "Verified Mentor",
       teaches: ["React.js & Next.js", "State Architecture"],
       wants: ["Design Systems", "UX Research"],
       status: "Active Today • 29 Trades"
@@ -551,9 +544,6 @@ function About({ setActivePage }) {
 
               <div className="about-engine-peer-footer">
                 <span className="about-footer-status-pill">{currentScenario.peerA.status}</span>
-                <span className="about-footer-verified-badge">
-                  <ShieldCheck size={13} /> {currentScenario.peerA.badge}
-                </span>
               </div>
             </div>
 
@@ -623,9 +613,6 @@ function About({ setActivePage }) {
 
               <div className="about-engine-peer-footer">
                 <span className="about-footer-status-pill">{currentScenario.peerB.status}</span>
-                <span className="about-footer-verified-badge">
-                  <Award size={13} /> {currentScenario.peerB.badge}
-                </span>
               </div>
             </div>
           </div>

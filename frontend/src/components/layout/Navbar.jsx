@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import {ArrowRight} from 'lucide-react';
 import logo from "../../assets/logo.png";
 import "./Navbar.css";
-function Navbar({activePage, setActivePage}) {
-    const [currentUser, logout] = useState(false); /// it change after useAuth
+function Navbar({activePage, setActivePage, currentUser: propCurrentUser, setCurrentUser}) {
+    const currentUser = propCurrentUser !== undefined ? propCurrentUser : false;
 
 
 const navLinks = currentUser
@@ -45,7 +45,24 @@ const navLinks = currentUser
 
                 <div className="nav-right">
                     {currentUser ? (
-                        <div><p>hi</p></div>
+                        <div className="nav-user-container">
+                            <div className="nav-user-info" onClick={() => setActivePage("dashboard")} title="Go to Dashboard">
+                                <span className="nav-user-avatar">
+                                    {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : "U"}
+                                </span>
+                                <span className="nav-user-name">{currentUser.name || "Member"}</span>
+                            </div>
+                            <button
+                                type="button"
+                                className="nav-logout-btn"
+                                onClick={() => {
+                                    if (setCurrentUser) setCurrentUser(null);
+                                    setActivePage("home");
+                                }}
+                            >
+                                Sign Out
+                            </button>
+                        </div>
                     ) : (
                         <div className="nav-ga">
                             <button
@@ -55,7 +72,10 @@ const navLinks = currentUser
                                 Sign In
                             </button>
 
-                            <button className="join-btn">
+                            <button
+                                onClick={() => setActivePage("signup")}
+                                className="join-btn"
+                            >
                                 <span>Join Skillor</span>
                                 <ArrowRight className="btn-icons" size={16}/>
                             </button>
