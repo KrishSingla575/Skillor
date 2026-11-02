@@ -24,7 +24,7 @@ import "./About.css";
 import narendarImg from "../members/Narendar.png";
 import krishAchraImg from "../members/Krish_achra.png";
 import krishSinglaImg from "../members/Krish_sigla.png";
-import lakshayImg from "../members/Lakshay.png";
+import lakshayImg from "../members/lakshay.png";
 
 const MATCH_SCENARIOS = [
   {
