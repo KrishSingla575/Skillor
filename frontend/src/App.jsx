@@ -1,10 +1,11 @@
 import Mainlayout from "./Mainlayout/mainlayout";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
-    <div>
+    <AuthProvider>
       <Mainlayout/>
-    </div>
+    </AuthProvider>
   );
 }
 
