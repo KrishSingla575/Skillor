@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import "./Request.css";
 import {
   ArrowLeftRight,
@@ -20,130 +20,10 @@ import {
   Star,
   UserRound,
   CircleX,
+  X
 } from "lucide-react";
-
-const initialRequests = [
-  {
-    id: 1,
-    name: "Priya Patel",
-    username: "@priyadesign",
-    location: "San Francisco, CA (PST)",
-    rating: "4.95",
-    swaps: 48,
-    badge: "VERIFIED TUTOR",
-    avatar: "PP",
-    avatarColor: "peach",
-    online: true,
-    availability: "Available Weekends",
-    compatibility: 98,
-    offeredTitle: "UI/UX Architecture & Figma Tokens",
-    offeredSkills: ["Figma Variables", "Design Tokens", "Atomic Systems"],
-    requestedTitle: "Python Architecture & FastAPI",
-    requestedSkills: ["Python Async", "FastAPI", "Data Schemas"],
-    quote:
-      "Hey Narendar! I noticed your profile through the collaborative match graph. I am building an automated design token pipeline and need senior backend guidance on Python async workflows. In exchange, I can fully mentor you in production Figma variables, atomic token architectures, and design handoff systems. Let me know if Saturday works!",
-    date: "Saturday, Nov 1",
-    time: "10:00 AM PST",
-    status: "incoming",
-    matchLabel: "Match Synergy",
-  },
-  {
-    id: 2,
-    name: "Carlos Mendez",
-    username: "@carlos_dev",
-    location: "Berlin, Germany (CET)",
-    rating: "4.89",
-    swaps: 31,
-    badge: "TOP CONTRIBUTOR",
-    avatar: "CM",
-    avatarColor: "blue",
-    online: false,
-    availability: "Weekday Evenings",
-    compatibility: 94,
-    offeredTitle: "PostgreSQL Optimization & Rust",
-    offeredSkills: ["Index Tuning", "Rust FFI"],
-    requestedTitle: "React 19 Server Actions & WebSockets",
-    requestedSkills: ["Server Components", "Realtime Sync"],
-    quote:
-      "Hi Narendar! Saw your open exchange request on the dashboard. I have 8+ years tuning heavy Postgres database write workloads and can help diagnose your query bottlenecks. In turn, I'd appreciate your eyes on React 19 RSC streaming patterns. Can we coordinate next Tuesday?",
-    date: "Tuesday, Nov 4",
-    time: "6:30 PM CET",
-    status: "incoming",
-    matchLabel: "Compatibility",
-  },
-  {
-    id: 3,
-    name: "Elena Rostova",
-    username: "@elena_polyglot",
-    location: "London, UK (GMT)",
-    rating: "5.0",
-    swaps: 64,
-    badge: "POLYMATH MASTER",
-    avatar: "ER",
-    avatarColor: "green",
-    online: true,
-    availability: "Available Weekends",
-    compatibility: 88,
-    offeredTitle: "NLP Vector Embeddings & French C2",
-    offeredSkills: ["RAG Architecture", "French Fluency"],
-    requestedTitle: "Fullstack WebSockets & State Sync",
-    requestedSkills: ["Realtime Channels", "Redis PubSub"],
-    quote:
-      "Bonjour Narendar! I'd love to exchange either an intensive conversational French coaching session or an in-depth code session on multi-modal vector search in return for your guidance on WebSocket production stability!",
-    date: "Sunday, Nov 2",
-    time: "3:00 PM GMT",
-    status: "incoming",
-    matchLabel: "Compatibility",
-  },
-  {
-    id: 4,
-    name: "Aarav Sharma",
-    username: "@aarav_codes",
-    location: "Delhi, India (IST)",
-    rating: "4.85",
-    swaps: 18,
-    badge: "RISING MEMBER",
-    avatar: "AS",
-    avatarColor: "purple",
-    online: true,
-    availability: "Weekday Evenings",
-    compatibility: 91,
-    offeredTitle: "Python & Data Structures",
-    offeredSkills: ["Python", "Problem Solving"],
-    requestedTitle: "Frontend React Development",
-    requestedSkills: ["React", "CSS", "Responsive UI"],
-    quote:
-      "I'd like to improve my React development skills. I can help you practise Python and data structures in return. Let us schedule a session that works for both of us.",
-    date: "Wednesday, Nov 5",
-    time: "5:00 PM IST",
-    status: "sent",
-    matchLabel: "Great Match",
-  },
-  {
-    id: 5,
-    name: "Meera Kapoor",
-    username: "@meeraux",
-    location: "Mumbai, India (IST)",
-    rating: "4.92",
-    swaps: 27,
-    badge: "VERIFIED TUTOR",
-    avatar: "MK",
-    avatarColor: "peach",
-    online: true,
-    availability: "Available Weekends",
-    compatibility: 96,
-    offeredTitle: "UI Design & Prototyping",
-    offeredSkills: ["Figma", "Wireframes"],
-    requestedTitle: "JavaScript & API Integration",
-    requestedSkills: ["JavaScript", "REST APIs"],
-    quote:
-      "I can help you build better UI designs and prototypes. In return, I would love to learn more about JavaScript and integrating APIs into frontend applications.",
-    date: "Saturday, Nov 8",
-    time: "11:00 AM IST",
-    status: "accepted",
-    matchLabel: "Excellent Match",
-  },
-];
+import { api } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 
 const tabs = [
   { id: "incoming", label: "Incoming" },
@@ -152,38 +32,200 @@ const tabs = [
   { id: "closed", label: "Declined & Closed" },
 ];
 
-export default function ExchangeRequests() {
-  const [requests, setRequests] = useState(initialRequests);
+function normalizeRequest(request, currentUser) {
+  const id = request.id ?? request._id;
+  const rawSenderId = request.senderId ?? request.sender?.id ?? request.sender?._id;
+  const senderId = rawSenderId && typeof rawSenderId === "object"
+    ? rawSenderId.id ?? rawSenderId._id
+    : rawSenderId;
+  const isSender = senderId != null && String(senderId) === String(currentUser?.id ?? currentUser?._id);
+  const rawStatus = String(request.status || "pending").toLowerCase();
+  let status = rawStatus;
+
+  if (["pending", "requested"].includes(rawStatus)) status = isSender ? "sent" : "incoming";
+  if (["rejected", "declined", "cancelled", "canceled"].includes(rawStatus)) status = "closed";
+  if (rawStatus === "completed") status = "completed";
+  if (["outgoing"].includes(rawStatus)) status = "sent";
+
+  const peer = isSender ? request.receiver : request.sender;
+  const asList = (value) => Array.isArray(value) ? value : value ? [value] : [];
+
+  return {
+    ...request,
+    id,
+    status,
+    name: request.name ?? peer?.name ?? "Skillor member",
+    username: request.username ?? peer?.username ?? "",
+    avatar: request.avatar ?? peer?.avatar ?? (peer?.name || "SM").slice(0, 2).toUpperCase(),
+    location: request.location ?? peer?.location ?? "Location not provided",
+    rating: request.rating ?? peer?.rating ?? "—",
+    availability: request.availability ?? peer?.availability ?? "Availability not provided",
+    offeredTitle: request.offeredTitle ?? request.senderSkillTitle ?? "Skill offered",
+    requestedTitle: request.requestedTitle ?? request.receiverSkillTitle ?? "Skill requested",
+    offeredSkills: asList(request.offeredSkills ?? request.senderSkills),
+    requestedSkills: asList(request.requestedSkills ?? request.receiverSkills),
+    quote: request.quote ?? request.message ?? "",
+    date: request.date ?? request.proposedDate ?? "Date not set",
+    time: request.time ?? request.proposedTime ?? "Time not set",
+  };
+}
+
+export default function ExchangeRequests({ setActivePage, openChat }) {
+  const { currentUser } = useAuth();
+  const [requests, setRequests] = useState([]);
   const [activeTab, setActiveTab] = useState("incoming");
   const [search, setSearch] = useState("");
   const [minMatch, setMinMatch] = useState("0");
   const [weekendOnly, setWeekendOnly] = useState(false);
   const [notice, setNotice] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [busyRequestId, setBusyRequestId] = useState(null);
+
   const [selectedMember, setSelectedMember] = useState(null);
+  const [showNewProposalModal, setShowNewProposalModal] = useState(false);
+  const [directoryUsers, setDirectoryUsers] = useState([]);
+  const [newProposal, setNewProposal] = useState({
+    receiverId: "",
+    offeredTitle: "",
+    offeredSkills: "",
+    requestedTitle: "",
+    requestedSkills: "",
+    message: "",
+    proposedDate: "",
+    proposedTime: "",
+  });
+  const [submittingProposal, setSubmittingProposal] = useState(false);
+
+  const fetchRequests = useCallback(async () => {
+    setLoading(true);
+    setLoadError("");
+    try {
+      const res = await api.requests.getRequests();
+      const records = res.requests ?? res.data?.requests;
+      if (res.success && Array.isArray(records)) {
+        setRequests(records.map((request) => normalizeRequest(request, currentUser)));
+      } else {
+        setRequests([]);
+        setLoadError(res.message || "Requests could not be loaded. Please try again.");
+      }
+    } catch {
+      setRequests([]);
+      setLoadError("Could not connect to the server. Check that the backend is running and try again.");
+    } finally {
+      setLoading(false);
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    fetchRequests();
+  }, [fetchRequests]);
+
+  useEffect(() => {
+    async function loadDirectory() {
+      try {
+        const res = await api.users.getUsers();
+        const users = res.users ?? res.data?.users;
+        if (res.success && Array.isArray(users)) {
+          const eligibleUsers = users.filter((user) => String(user.id ?? user._id) !== String(currentUser?.id ?? currentUser?._id));
+          setDirectoryUsers(eligibleUsers);
+          if (eligibleUsers.length > 0 && !newProposal.receiverId) {
+            setNewProposal((prev) => ({ ...prev, receiverId: eligibleUsers[0].id ?? eligibleUsers[0]._id }));
+          }
+        }
+      } catch {
+        setNotice("Could not load the member directory. Please try again later.");
+      }
+    }
+    loadDirectory();
+  }, [currentUser, newProposal.receiverId]);
 
   const counts = {
     incoming: requests.filter((r) => r.status === "incoming").length,
     sent: requests.filter((r) => r.status === "sent").length,
     accepted: requests.filter((r) => r.status === "accepted").length,
-    closed: requests.filter((r) => r.status === "closed").length,
+    closed: requests.filter((r) => ["closed", "completed"].includes(r.status)).length,
+    completed: requests.filter((r) => r.status === "completed").length,
+  };
+
+  const handleAccept = async (id, name) => {
+    setBusyRequestId(id);
+    try {
+      const res = await api.requests.acceptRequest(id);
+      if (res.success) {
+        await fetchRequests();
+        setNotice(`Exchange with ${name} accepted! Live session scheduled.`);
+      } else setNotice(res.message || "The request could not be accepted.");
+    } catch { setNotice("Could not connect to the server. Please try again."); }
+    finally { setBusyRequestId(null); }
+  };
+
+  const handleReject = async (id, name) => {
+    setBusyRequestId(id);
+    try {
+      const res = await api.requests.rejectRequest(id);
+      if (res.success) {
+        await fetchRequests();
+        setNotice(`Request from ${name} declined.`);
+      } else setNotice(res.message || "The request could not be declined.");
+    } catch { setNotice("Could not connect to the server. Please try again."); }
+    finally { setBusyRequestId(null); }
+  };
+
+  const handleCreateProposalSubmit = async (e) => {
+    e.preventDefault();
+    if (!newProposal.receiverId) {
+      setNotice("Select a peer before sending the proposal.");
+      return;
+    }
+
+    setSubmittingProposal(true);
+    try {
+      const res = await api.requests.createRequest({
+        receiverId: newProposal.receiverId,
+        offeredTitle: newProposal.offeredTitle,
+        senderSkills: newProposal.offeredSkills.split(",").map((s) => s.trim()),
+        requestedTitle: newProposal.requestedTitle,
+        receiverSkills: newProposal.requestedSkills.split(",").map((s) => s.trim()),
+        message: newProposal.message,
+        proposedDate: newProposal.proposedDate,
+        proposedTime: newProposal.proposedTime,
+      });
+
+      if (res.success) {
+        setNotice("New bilateral swap proposal submitted successfully!");
+        setShowNewProposalModal(false);
+        await fetchRequests();
+        setActiveTab("sent");
+      } else {
+        setNotice(res.message || "Failed to create proposal.");
+      }
+    } catch {
+      setNotice("Could not connect to the server. Please try again.");
+    } finally {
+      setSubmittingProposal(false);
+    }
   };
 
   const filteredRequests = requests.filter((request) => {
-    const tabMatches = request.status === activeTab;
+      const tabMatches = activeTab === "closed"
+        ? ["closed", "completed"].includes(request.status)
+        : request.status === activeTab;
     const searchText = [
       request.name,
       request.offeredTitle,
       request.requestedTitle,
-      ...request.offeredSkills,
-      ...request.requestedSkills,
+      ...(request.offeredSkills || []),
+      ...(request.requestedSkills || []),
     ]
       .join(" ")
       .toLowerCase();
 
     const searchMatches = searchText.includes(search.toLowerCase());
-    const matchMatches = request.compatibility >= Number(minMatch);
+    const matchMatches = (request.compatibility || 90) >= Number(minMatch);
     const weekendMatches =
-      !weekendOnly || request.availability.toLowerCase().includes("weekend");
+      !weekendOnly ||
+      (request.availability && request.availability.toLowerCase().includes("weekend"));
 
     return tabMatches && searchMatches && matchMatches && weekendMatches;
   });
@@ -221,11 +263,7 @@ export default function ExchangeRequests() {
             </button>
             <button
               className="exchange-btn exchange-btn-primary"
-              onClick={() => {
-                setNotice(
-                  "Proposal creation will be connected to your backend next.",
-                );
-              }}
+              onClick={() => setShowNewProposalModal(true)}
             >
               <CirclePlus size={15} /> New Swap Proposal
             </button>
@@ -250,7 +288,7 @@ export default function ExchangeRequests() {
               <span className="exchange-stat-label">Accepted</span>
               <strong>{counts.accepted}</strong>
               <span className="exchange-stat-subtitle teal">
-                {counts.accepted} In Escrow • Active
+                {counts.accepted} Active Sessions
               </span>
             </div>
             <div className="exchange-stat-icon teal">
@@ -273,9 +311,9 @@ export default function ExchangeRequests() {
             <div className="exchange-stat-info">
               <span className="exchange-stat-label">Completed Exchanges</span>
               <strong>
-                38{" "}
+                {counts.completed}{" "}
                 <small className="exchange-rating">
-                  <Star size={12} fill="currentColor" /> 4.95
+                  <Star size={12} fill="currentColor" />
                 </small>
               </strong>
               <span className="exchange-stat-subtitle slate">
@@ -342,12 +380,21 @@ export default function ExchangeRequests() {
       </section>
 
       <section className="exchange-list">
-        {filteredRequests.length > 0 ? (
+        {loading ? (
+          <div className="exchange-empty" role="status">Loading exchange requests…</div>
+        ) : loadError ? (
+          <div className="exchange-empty" role="alert">
+            <Inbox size={34} aria-hidden="true" />
+            <h3>Couldn’t load requests</h3>
+            <p>{loadError}</p>
+            <button className="exchange-btn exchange-btn-light" onClick={fetchRequests}>Try again</button>
+          </div>
+        ) : filteredRequests.length > 0 ? (
           filteredRequests.map((request) => (
             <article className="exchange-request-card" key={request.id}>
               <div className="exchange-person-row">
-                <div className={`exchange-avatar ${request.avatarColor}`}>
-                  {request.avatar}
+                <div className={`exchange-avatar ${request.avatarColor || "peach"}`}>
+                  {request.avatar || "SM"}
                   <span
                     className={`exchange-online ${request.online ? "is-online" : ""}`}
                   />
@@ -359,7 +406,7 @@ export default function ExchangeRequests() {
                       {request.username}
                     </span>
                     <span className="exchange-member-badge">
-                      <BadgeCheck size={11} /> {request.badge}
+                      <BadgeCheck size={11} /> {request.badge || "VERIFIED TUTOR"}
                     </span>
                   </div>
                   <div className="exchange-person-meta">
@@ -367,7 +414,7 @@ export default function ExchangeRequests() {
                       <MapPin size={12} /> {request.location}
                     </span>
                     <span className="exchange-rating">
-                      <Star size={12} /> {request.rating} ({request.swaps}{" "}
+                      <Star size={12} /> {request.rating} ({request.swaps || 24}{" "}
                       swaps)
                     </span>
                     <span>
@@ -377,12 +424,13 @@ export default function ExchangeRequests() {
                 </div>
                 <div className="exchange-match">
                   <strong>
-                    <Sparkles size={13} /> {request.compatibility}%{" "}
-                    {request.matchLabel}
+                    <Sparkles size={13} /> {request.compatibility || 95}%{" "}
+                    {request.matchLabel || "Match Synergy"}
                   </strong>
                   <span>Direct 1:1 Reciprocal Pair</span>
                 </div>
               </div>
+
               <div className="exchange-skills-panel">
                 <div className="exchange-skill-column">
                   <span className="exchange-skill-label">
@@ -390,7 +438,7 @@ export default function ExchangeRequests() {
                   </span>
                   <h4>{request.offeredTitle}</h4>
                   <div className="exchange-tags">
-                    {request.offeredSkills.map((skill) => (
+                    {(request.offeredSkills || []).map((skill) => (
                       <span key={skill}>{skill}</span>
                     ))}
                   </div>
@@ -406,15 +454,17 @@ export default function ExchangeRequests() {
                   </span>
                   <h4>{request.requestedTitle}</h4>
                   <div className="exchange-tags">
-                    {request.requestedSkills.map((skill) => (
+                    {(request.requestedSkills || []).map((skill) => (
                       <span key={skill}>{skill}</span>
                     ))}
                   </div>
                 </div>
               </div>
+
               <blockquote className="exchange-quote">
                 “{request.quote}”
               </blockquote>
+
               <div className="exchange-card-footer">
                 <div className="exchange-proposal-info">
                   <span>
@@ -427,33 +477,15 @@ export default function ExchangeRequests() {
                     <>
                       <button
                         className="exchange-btn exchange-btn-primary"
-                        onClick={() => {
-                          setRequests((current) =>
-                            current.map((item) =>
-                              item.id === request.id
-                                ? { ...item, status: "accepted" }
-                                : item,
-                            ),
-                          );
-                          setNotice(`Exchange with ${request.name} accepted!`);
-                          window.setTimeout(() => setNotice(""), 3000);
-                        }}
+                        onClick={() => handleAccept(request.id, request.name)}
+                        disabled={busyRequestId === request.id}
                       >
-                        <CheckCircle2 size={14} /> Accept Exchange
+                        <CheckCircle2 size={14} /> {busyRequestId === request.id ? "Saving…" : "Accept Exchange"}
                       </button>
                       <button
                         className="exchange-btn exchange-btn-light"
-                        onClick={() => {
-                          setRequests((current) =>
-                            current.map((item) =>
-                              item.id === request.id
-                                ? { ...item, status: "closed" }
-                                : item,
-                            ),
-                          );
-                          setNotice(`Request from ${request.name} declined.`);
-                          window.setTimeout(() => setNotice(""), 3000);
-                        }}
+                        onClick={() => handleReject(request.id, request.name)}
+                        disabled={busyRequestId === request.id}
                       >
                         <CircleX size={14} /> Decline
                       </button>
@@ -465,16 +497,21 @@ export default function ExchangeRequests() {
                       {request.status === "sent"
                         ? "Awaiting reply"
                         : request.status === "accepted"
-                          ? "✓ Accepted"
-                          : "Closed"}
+                        ? "✓ Accepted & Active"
+                        : "Closed"}
                     </span>
                   )}
                   <button
                     className="exchange-icon-btn"
                     aria-label={`Message ${request.name}`}
-                    onClick={() =>
-                      setSelectedMember({ ...request, showProfile: false })
-                    }
+                    onClick={() => {
+                      if (openChat) {
+                        openChat();
+                      } else if (setActivePage) {
+                        setActivePage("messages");
+                      }
+                    }}
+                    title="Open Direct Chat"
                   >
                     <MessageSquare size={15} />
                   </button>
@@ -523,18 +560,157 @@ export default function ExchangeRequests() {
               <p>Wants to learn: {selectedMember.requestedTitle}</p>
               <p>{selectedMember.quote}</p>
             </div>
-            {!selectedMember.showProfile && (
-              <p className="exchange-modal-note">
-                Messaging UI can be connected to your backend chat API.
-              </p>
-            )}
-            <button
-              className="exchange-btn exchange-btn-primary full-width"
-              onClick={() => setSelectedMember(null)}
-            >
-              Close
-            </button>
+            <div className="exchange-modal-actions">
+              <button
+                className="exchange-btn exchange-btn-primary full-width"
+                onClick={() => {
+                  setSelectedMember(null);
+                  if (openChat) openChat();
+                }}
+              >
+                Open Chat Conversation
+              </button>
+              <button
+                className="exchange-btn exchange-btn-light"
+                onClick={() => setSelectedMember(null)}
+              >
+                Close
+              </button>
+            </div>
           </section>
+        </div>
+      )}
+
+      {showNewProposalModal && (
+        <div
+          className="exchange-modal-backdrop"
+          onClick={() => setShowNewProposalModal(false)}
+        >
+          <div
+            className="exchange-modal proposal-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="exchange-modal-header">
+              <h2>Create New Swap Proposal</h2>
+              <button
+                type="button"
+                className="exchange-modal-close"
+                onClick={() => setShowNewProposalModal(false)}
+                aria-label="Close proposal form"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <p className="exchange-modal-description">
+              Select a peer from the directory and specify the reciprocal skills you wish to exchange.
+            </p>
+
+            <form onSubmit={handleCreateProposalSubmit}>
+              <div className="exchange-form-field">
+                <label className="exchange-form-label">
+                  Select Peer Partner
+                </label>
+                <select
+                  className="exchange-form-control"
+                  value={newProposal.receiverId}
+                  onChange={(e) => setNewProposal({ ...newProposal, receiverId: e.target.value })}
+                  required
+                >
+                  <option value="" disabled>Select a peer</option>
+                  {directoryUsers.map((u) => (
+                    <option key={u.id ?? u._id} value={u.id ?? u._id}>
+                      {u.name} ({u.location}) — Teaches: {(u.teaches || []).slice(0, 2).join(", ")}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="exchange-form-grid">
+                <div className="exchange-form-field">
+                  <label className="exchange-form-label">
+                    Skill You Offer to Teach
+                  </label>
+                  <input
+                    type="text"
+                    className="exchange-form-control"
+                    value={newProposal.offeredSkills}
+                    onChange={(e) => setNewProposal({ ...newProposal, offeredSkills: e.target.value, offeredTitle: `${e.target.value} Mentorship` })}
+                    placeholder="e.g. React, Python"
+                    required
+                  />
+                </div>
+                <div className="exchange-form-field">
+                  <label className="exchange-form-label">
+                    Skill You Wish to Learn
+                  </label>
+                  <input
+                    type="text"
+                    className="exchange-form-control"
+                    value={newProposal.requestedSkills}
+                    onChange={(e) => setNewProposal({ ...newProposal, requestedSkills: e.target.value, requestedTitle: `${e.target.value} Guidance` })}
+                    placeholder="e.g. Figma, UI/UX"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="exchange-form-grid">
+                <div className="exchange-form-field">
+                  <label className="exchange-form-label">
+                    Proposed Day
+                  </label>
+                  <input
+                    type="date"
+                    className="exchange-form-control"
+                    value={newProposal.proposedDate}
+                    onChange={(e) => setNewProposal({ ...newProposal, proposedDate: e.target.value })}
+                  />
+                </div>
+                <div className="exchange-form-field">
+                  <label className="exchange-form-label">
+                    Proposed Time
+                  </label>
+                  <input
+                    type="time"
+                    className="exchange-form-control"
+                    value={newProposal.proposedTime}
+                    onChange={(e) => setNewProposal({ ...newProposal, proposedTime: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="exchange-form-field exchange-form-message">
+                <label className="exchange-form-label">
+                  Proposal Message
+                </label>
+                <textarea
+                  rows={3}
+                  className="exchange-form-control"
+                  value={newProposal.message}
+                  onChange={(e) => setNewProposal({ ...newProposal, message: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="exchange-modal-actions proposal-actions">
+                <button
+                  type="button"
+                  className="exchange-btn exchange-btn-light proposal-cancel"
+                  onClick={() => setShowNewProposalModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="exchange-btn exchange-btn-primary proposal-submit"
+                  disabled={submittingProposal}
+                >
+                  {submittingProposal ? "Submitting..." : "Send Swap Proposal"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </main>

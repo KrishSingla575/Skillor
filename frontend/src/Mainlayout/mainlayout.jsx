@@ -7,11 +7,13 @@ import Footer from "../components/layout/Footer";
 import Dashboard from "../pages/Dashboard";
 import Matches from "../pages/Matches";
 import Request from "../pages/Request";
+import Messages from "../pages/Messages";
 import Login from "../pages/Login";
+import { useAuth } from "../context/AuthContext";
 
 function Mainlayout() {
     const [activePage, setActivePage] = useState("home");
-    const [currentUser, setCurrentUser] = useState(null);
+    const { currentUser, setCurrentUser, logout } = useAuth();
 
     // Full screen immersive glass auth experience with login_bg image
     if (activePage === "login" || activePage === "signup") {
@@ -31,6 +33,7 @@ function Mainlayout() {
                 setActivePage={setActivePage}
                 currentUser={currentUser}
                 setCurrentUser={setCurrentUser}
+                onLogout={logout}
             />
             <main className="main-content">
                 {activePage === "home" && <Home setActivePage={setActivePage} />}
@@ -44,6 +47,8 @@ function Mainlayout() {
                 {activePage === "matches" && <Matches setActivePage={setActivePage} />}
 
                 {activePage === "request" && <Request setActivePage={setActivePage} />}
+
+                {activePage === "messages" && <Messages setActivePage={setActivePage} />}
             </main>
             <Footer />
         </div>

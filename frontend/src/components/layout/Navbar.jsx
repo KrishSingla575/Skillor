@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {ArrowRight} from 'lucide-react';
 import logo from "../../assets/logo.png";
 import "./Navbar.css";
-function Navbar({activePage, setActivePage, currentUser: propCurrentUser, setCurrentUser}) {
+function Navbar({activePage, setActivePage, currentUser: propCurrentUser, setCurrentUser, onLogout}) {
     const currentUser = propCurrentUser !== undefined ? propCurrentUser : false;
 
 
@@ -56,7 +56,8 @@ const navLinks = currentUser
                                 type="button"
                                 className="nav-logout-btn"
                                 onClick={() => {
-                                    if (setCurrentUser) setCurrentUser(null);
+                                    if (onLogout) onLogout();
+                                    else if (setCurrentUser) setCurrentUser(null);
                                     setActivePage("home");
                                 }}
                             >
