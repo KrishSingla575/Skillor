@@ -18,8 +18,6 @@ import { useAuth } from "../context/AuthContext";
 function Mainlayout() {
     const [activePage, setActivePage] = useState("home");
     const { currentUser, setCurrentUser, logout } = useAuth();
-
-    // Full screen immersive glass auth experience with login_bg image
     if (activePage === "login" || activePage === "signup") {
         return (
             <Login
