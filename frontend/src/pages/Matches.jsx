@@ -6,7 +6,6 @@ import {
 
 import "./Matches.css";
 
-// Temporary data. Later this will come from the backend: GET /api/matches
 const allMatches = [
     {
         id: 1,
@@ -78,11 +77,9 @@ const allMatches = [
 
 const PAGE_SIZE = 3;
 
-// true if the list has at least one skill that contains the typed word
 const hasAny = (list, wanted) =>
     wanted.some((w) => list.some((s) => s.toLowerCase().includes(w.toLowerCase())));
 
-// For checkbox filters: nothing ticked = no filter
 const ticked = (obj) => Object.keys(obj).filter((k) => obj[k]);
 
 function Matches() {
@@ -92,10 +89,8 @@ function Matches() {
     const [page, setPage] = useState(1);
     const [matches, setMatches] = useState(allMatches);
 
-    // Profile popup: holds the person you clicked, or null
     const [selected, setSelected] = useState(null);
 
-    // Filters
     const [learnSkills, setLearnSkills] = useState([]);
     const [teachSkills, setTeachSkills] = useState([]);
     const [learnInput, setLearnInput] = useState("");
@@ -114,7 +109,6 @@ function Matches() {
             prev.map((m) => (m.id === id ? { ...m, [field]: !m[field] } : m))
         );
 
-    // Press Enter in the skill box to add a tag
     const addSkill = (e, value, list, setList, setInput) => {
         if (e.key !== "Enter") return;
         e.preventDefault();
@@ -150,9 +144,7 @@ function Matches() {
             if (tab === "best" && m.score < 85) return false;
             if (tab === "new" && !m.isNew) return false;
 
-            // Skills I want to learn -> person must TEACH one of them
             if (learnSkills.length && !hasAny(m.teaches, learnSkills)) return false;
-            // Skills I can teach -> person must WANT one of them
             if (teachSkills.length && !hasAny(m.wants, teachSkills)) return false;
 
             if (levels.length && !levels.includes(m.level)) return false;
@@ -188,7 +180,6 @@ function Matches() {
 
     return (
         <div className="matches-page">
-            {/* Page header */}
             <section className="matches-hero">
                 <div className="matches-hero-icon">
                     <Users size={28} />
@@ -225,7 +216,6 @@ function Matches() {
             </section>
 
             <div className="matches-layout">
-                {/* Left column */}
                 <div className="matches-main">
                     <div className="matches-toolbar">
                         <div className="matches-tabs">
@@ -265,7 +255,6 @@ function Matches() {
                         </label>
                     </div>
 
-                    {/* Empty state */}
                     {current.length === 0 && (
                         <div className="matches-empty">
                             <Search size={28} />
@@ -277,7 +266,6 @@ function Matches() {
                         </div>
                     )}
 
-                    {/* Match cards */}
                     {current.map((m) => (
                         <article className="mx-card" key={m.id}>
                             <div className="mx-card-top">
@@ -380,7 +368,6 @@ function Matches() {
                         </article>
                     ))}
 
-                    {/* Pagination */}
                     {visible.length > 0 && (
                         <div className="mx-pagination">
                             <button
@@ -415,7 +402,6 @@ function Matches() {
                     )}
                 </div>
 
-                {/* Right column: filters */}
                 <aside className="matches-side">
                     <div className="filters-card">
                         <div className="filters-head">
@@ -562,7 +548,6 @@ function Matches() {
                 </aside>
             </div>
 
-            {/* Profile popup */}
             {selected && (
                 <div className="mx-overlay" onClick={() => setSelected(null)}>
                     <div className="mx-modal" onClick={(e) => e.stopPropagation()}>

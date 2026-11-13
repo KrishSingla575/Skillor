@@ -40,7 +40,6 @@ const INITIAL_PEERS = [
     role: "Senior Frontend Architect @ TechFlow",
     rating: 4.9,
     reviewsCount: 42,
-    badge: "Super Peer",
     teaches: ["React.js", "TypeScript", "Next.js"],
     wants: ["Figma Design Systems", "UI Prototyping"],
     category: "engineering",
@@ -55,7 +54,6 @@ const INITIAL_PEERS = [
     role: "Lead UX Designer @ AutoCreative",
     rating: 4.95,
     reviewsCount: 38,
-    badge: "Verified Mentor",
     teaches: ["Figma Design Systems", "UI/UX", "User Research"],
     wants: ["React.js", "Tailwind CSS"],
     category: "design",
@@ -70,7 +68,6 @@ const INITIAL_PEERS = [
     role: "AI & ML Engineer @ NeuralGrid",
     rating: 4.9,
     reviewsCount: 31,
-    badge: "Top Rated",
     teaches: ["PyTorch", "Python", "LLM Prompting"],
     wants: ["SEO Strategy", "Product Growth"],
     category: "ai",
@@ -85,7 +82,6 @@ const INITIAL_PEERS = [
     role: "Growth Lead @ ScalePulse",
     rating: 4.88,
     reviewsCount: 29,
-    badge: "Verified Mentor",
     teaches: ["Product Growth", "SEO Strategy", "Content Loops"],
     wants: ["Python", "Data Analysis"],
     category: "growth",
@@ -100,7 +96,6 @@ const INITIAL_PEERS = [
     role: "Lead Mobile Developer @ AppCraft",
     rating: 4.92,
     reviewsCount: 45,
-    badge: "Super Peer",
     teaches: ["Flutter", "Dart", "iOS Swift"],
     wants: ["DaVinci Resolve", "Motion Design"],
     category: "engineering",
@@ -115,7 +110,6 @@ const INITIAL_PEERS = [
     role: "Motion & 3D Artist @ PixelStudio",
     rating: 4.96,
     reviewsCount: 52,
-    badge: "Top Rated",
     teaches: ["DaVinci Resolve", "Blender 3D", "After Effects"],
     wants: ["Flutter", "Spanish Fluency"],
     category: "media",
@@ -130,7 +124,6 @@ const INITIAL_PEERS = [
     role: "Cloud DevOps & Platform Engineer",
     rating: 4.89,
     reviewsCount: 26,
-    badge: "Verified Mentor",
     teaches: ["Docker", "Kubernetes", "AWS Infrastructure"],
     wants: ["Public Speaking", "Technical Writing"],
     category: "engineering",
@@ -145,7 +138,6 @@ const INITIAL_PEERS = [
     role: "Bilingual Tech Lead & Keynote Speaker",
     rating: 4.94,
     reviewsCount: 37,
-    badge: "Super Peer",
     teaches: ["Public Speaking", "Executive Communication", "Korean"],
     wants: ["Docker", "AWS Infrastructure"],
     category: "languages",
@@ -955,8 +947,6 @@ function Home() {
                       <span className="peer-role-text">{peer.role}</span>
                     </div>
                   </div>
-
-                  <span className="peer-badge-tag">{peer.badge}</span>
                 </div>
 
                 <p className="peer-bio">{peer.bio}</p>

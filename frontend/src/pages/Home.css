@@ -365,7 +365,9 @@
   flex-wrap: wrap;
   font-size: 13px;
   color: #64748b;
-  padding-bottom: 20px;
+  padding: 10px;
+  background: #0f172a;
+  border-radius: 20px;
 }
 
 .trust-item {
