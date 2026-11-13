@@ -3,19 +3,20 @@ import {ArrowRight} from 'lucide-react';
 import logo from "../../assets/logo.png";
 import "./Navbar.css";
 function Navbar({activePage, setActivePage}) {
-    const [currentUser, logout] = useState(false); /// it change after useAuth
+    const [currentUser, logout] = useState(true); /// it change after useAuth
 
 
 const navLinks = currentUser
     ? [
         { id: "dashboard", label: "Dashboard" },
-        { id: "match", label: "Matches" },
+        { id: "matches", label: "Matches" },
         { id: "messages", label: "Messages" }
     ]
     : [
         { id: "home", label: "Home" },
         { id: "how-to-work", label: "How It Works" },
-        { id: "about", label: "About" }
+        { id: "about", label: "About" },
+
     ];
     return(
         <header className="nav">
@@ -43,9 +44,16 @@ const navLinks = currentUser
                 </nav>
 
                 <div className="nav-right">
-                    {currentUser ? (
-                        <div><p>hi</p></div>
-                    ) : (
+                  {currentUser ? (
+    <div>
+        <button
+            onClick={() => setActivePage("profile")}
+            className={`nav-link-btn ${activePage === "profile" ? "active" : ""}`}
+        >
+            <span className="nav-text">My Profile</span>
+        </button>
+    </div>
+) : (
                         <div className="nav-ga">
                             <button
                                 onClick={() => setActivePage("login")}
