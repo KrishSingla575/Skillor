@@ -16,12 +16,6 @@ import {
 } from "lucide-react";
 import logo from "../../assets/logo.png";
 import "./Navbar.css";
-<<<<<<< HEAD
-function Navbar({activePage, setActivePage}) {
-    const [currentUser, logout] = useState(true); /// it change after useAuth
-=======
->>>>>>> dc249b869d9cfad21d53591876fc593db5977ac9
-
 function Navbar({
   activePage,
   setActivePage,
@@ -32,7 +26,6 @@ function Navbar({
   const currentUser = propCurrentUser !== undefined ? propCurrentUser : false;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Close mobile menu on page transition
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [activePage]);
@@ -73,27 +66,7 @@ function Navbar({
 
   const navLinks = currentUser
     ? [
-<<<<<<< HEAD
-        { id: "dashboard", label: "Dashboard" },
-        { id: "matches", label: "Matches" },
-        { id: "messages", label: "Messages" }
-    ]
-    : [
-        { id: "home", label: "Home" },
-        { id: "how-to-work", label: "How It Works" },
-        { id: "about", label: "About" },
-
-    ];
-    return(
-        <header className="nav">
-            <div className="main">
-                <div 
-                    onClick={()=> setActivePage('home')}
-                    className="Mlogo">
-                    <img src={logo} alt="Logo" className="logo"/>
-                </div>
-=======
-        { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
         { id: "matches", label: "Matches", icon: Users },
         { id: "request", label: "Request", icon: Inbox },
         { id: "messages", label: "Messages", icon: MessageSquare }
@@ -103,41 +76,18 @@ function Navbar({
         { id: "how-to-work", label: "How It Works", icon: HelpCircle },
         { id: "about", label: "About", icon: Info }
       ];
->>>>>>> dc249b869d9cfad21d53591876fc593db5977ac9
-
   const handleNavClick = (id) => {
     setActivePage(id);
     setIsMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-<<<<<<< HEAD
-                <div className="nav-right">
-                  {currentUser ? (
-    <div>
-        <button
-            onClick={() => setActivePage("profile")}
-            className={`nav-link-btn ${activePage === "profile" ? "active" : ""}`}
-        >
-            <span className="nav-text">My Profile</span>
-        </button>
-    </div>
-) : (
-                        <div className="nav-ga">
-                            <button
-                                onClick={() => setActivePage("login")}
-                                className="login"
-                            >
-                                Sign In
-                            </button>
-=======
   const handleSignOut = () => {
     if (onLogout) onLogout();
     else if (setCurrentUser) setCurrentUser(null);
     setActivePage("home");
     setIsMobileMenuOpen(false);
   };
->>>>>>> dc249b869d9cfad21d53591876fc593db5977ac9
 
   return (
     <header className="nav">
