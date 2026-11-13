@@ -50,7 +50,7 @@ function Mainlayout() {
 
                 {activePage === "messages" && <Messages setActivePage={setActivePage} />}
             </main>
-            <Footer />
+            <Footer setActivePage={setActivePage} />
         </div>
     );
 }
