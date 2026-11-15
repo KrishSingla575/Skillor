@@ -945,3 +945,212 @@
         padding: 18px;
     }
 }
+
+
+/* Dashboard Modal & Toast Styles */
+.dashboard-toast {
+  position: fixed;
+  top: 90px;
+  right: 32px;
+  background: rgba(16, 185, 129, 0.95);
+  color: #FFFFFF;
+  padding: 12px 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  z-index: 2500;
+  backdrop-filter: blur(10px);
+  animation: slideInRight 0.3s ease;
+}
+
+.dashboard-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.dashboard-modal-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 520px;
+  padding: 32px;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  color: #1E293B;
+}
+
+.dashboard-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #F1F5F9;
+  border: none;
+  color: #64748B;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dashboard-modal-close:hover {
+  background: #E2E8F0;
+  color: #0F172A;
+}
+
+.dashboard-modal-card h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.35rem;
+  color: #0F172A;
+  font-weight: 700;
+}
+
+.dashboard-modal-card .modal-desc {
+  color: #64748B;
+  font-size: 0.9rem;
+  margin: 0 0 22px 0;
+  line-height: 1.5;
+}
+
+.add-skill-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.add-skill-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.add-skill-form .form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.add-skill-form .form-group input,
+.add-skill-form .form-group select {
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.92rem;
+  color: #0F172A;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.add-skill-form .form-group input:focus,
+.add-skill-form .form-group select:focus {
+  border-color: #7C3AED;
+  background: #FFFFFF;
+}
+
+.add-skill-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.modal-btn.secondary {
+  background: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  color: #475569;
+}
+
+.modal-btn.secondary:hover {
+  background: #E2E8F0;
+}
+
+.modal-btn.primary {
+  background: linear-gradient(135deg, #7C3AED, #2563EB);
+  border: none;
+  color: #FFFFFF;
+}
+
+.modal-btn.primary:hover:not(:disabled) {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.modal-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.session-modal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #EEF2FF;
+  color: #4F46E5;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.meeting-room-box {
+  background: #F8FAFC;
+  border: 1px dashed #CBD5E1;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+}
+
+.meeting-room-box .room-label {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.meeting-room-box .room-code {
+  font-family: monospace;
+  font-size: 0.95rem;
+  color: #7C3AED;
+  font-weight: 700;
+  word-break: break-all;
+}
