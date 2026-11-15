@@ -19,6 +19,7 @@
   z-index: 100;
 }
 
+.main,
 .nav-container {
   width: 100%;
   max-width: 1320px;
@@ -176,6 +177,7 @@
 
 /* User Container (Logged In State) */
 .nav-user-container {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -194,9 +196,123 @@
   user-select: none;
 }
 
-.nav-user-info:hover {
+.nav-user-info:hover,
+.nav-user-info.open {
   background: #e2e8f0;
   border-color: #cbd5e1;
+}
+
+.dropdown-chevron {
+  color: #64748b;
+  transition: transform 0.22s ease;
+}
+
+.dropdown-chevron.rotated {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 230px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 14px 38px -4px rgba(15, 23, 42, 0.14),
+              0 4px 12px -2px rgba(15, 23, 42, 0.05);
+  padding: 8px;
+  z-index: 250;
+  animation: dropdownSlideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dropdownSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dropdown-user-header {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.dropdown-user-header strong {
+  font-size: 0.92rem;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.dropdown-user-header span {
+  font-size: 0.78rem;
+  color: #64748b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 6px 0;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-align: left;
+}
+
+.dropdown-item:hover {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.dropdown-item.logout {
+  color: #ef4444;
+}
+
+.dropdown-item.logout:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.item-icon {
+  flex-shrink: 0;
+}
+
+.icon-purple {
+  color: #8b5cf6;
+}
+
+.icon-blue {
+  color: #3b82f6;
+}
+
+.icon-green {
+  color: #10b981;
+}
+
+.icon-red {
+  color: #ef4444;
 }
 
 .nav-user-avatar {

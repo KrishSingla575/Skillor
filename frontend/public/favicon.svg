@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="50%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+
+    <!-- Border Gradient -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f97316" stop-opacity="0.9"/>
+      <stop offset="50%" stop-color="#ec4899" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.9"/>
+    </linearGradient>
+
+    <!-- Ascending Skill Bars Gradients -->
+    <linearGradient id="bar1" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#e11d48"/>
+      <stop offset="100%" stop-color="#fb7185"/>
+    </linearGradient>
+
+    <linearGradient id="bar2" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#ea580c"/>
+      <stop offset="100%" stop-color="#fbbf24"/>
+    </linearGradient>
+
+    <linearGradient id="bar3" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+
+    <linearGradient id="bar4" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+
+    <!-- Arrow & Growth Swoosh Gradient -->
+    <linearGradient id="swooshGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ec4899"/>
+      <stop offset="60%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+
+    <!-- Climber / Figure Gradient -->
+    <linearGradient id="figureGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#fed7aa"/>
+    </linearGradient>
+
+    <!-- Mortarboard Cap / Sparkle Gradient -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+
+    <!-- Subtle Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- Squircle Base Container -->
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#bgGrad)" filter="url(#shadow)"/>
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="none" stroke="url(#borderGrad)" stroke-width="4"/>
+
+  <!-- Subtle Top Specular Glass Sheen -->
+  <path d="M 16 128 C 16 66.2 66.2 16 128 16 L 384 16 C 445.8 16 496 66.2 496 128 L 496 180 C 340 140 172 170 16 230 Z" fill="#ffffff" opacity="0.05"/>
+
+  <!-- Ascending Growth / Skill Swap Bars -->
+  <!-- Bar 1 (Pink / Rose) -->
+  <rect x="100" y="290" width="56" height="120" rx="18" fill="url(#bar1)"/>
+  
+  <!-- Bar 2 (Orange / Amber) -->
+  <rect x="176" y="235" width="56" height="175" rx="18" fill="url(#bar2)"/>
+  
+  <!-- Bar 3 (Cyan / Sky Blue) -->
+  <rect x="252" y="175" width="56" height="235" rx="18" fill="url(#bar3)"/>
+  
+  <!-- Bar 4 (Purple / Indigo) -->
+  <rect x="328" y="115" width="56" height="295" rx="18" fill="url(#bar4)"/>
+
+  <!-- Upward Trajectory Arrow Swoosh -->
+  <path d="M 85 365 Q 180 340 280 230 Q 345 160 380 95" fill="none" stroke="url(#swooshGrad)" stroke-width="14" stroke-linecap="round" filter="url(#glow)"/>
+  <!-- Arrow Head -->
+  <polygon points="398,80 355,95 385,125" fill="#38bdf8"/>
+
+  <!-- Stylized Climbing Learner / Mentor Figure -->
+  <g id="climber" fill="url(#figureGrad)" filter="url(#glow)">
+    <!-- Head -->
+    <circle cx="215" cy="115" r="22"/>
+
+    <!-- Dynamic Leaping Torso & Limbs -->
+    <path d="M 215 140 C 215 155 230 175 240 195 L 260 215 C 265 220 275 215 272 205 L 252 180 C 248 170 242 160 238 145 Z"/>
+    
+    <!-- Left Leg Striding Up to Bar 2 -->
+    <path d="M 230 185 L 195 210 L 190 235 C 188 242 196 248 202 242 L 210 220 L 238 198 Z"/>
+    
+    <!-- Right Leg Leaping Upward to Bar 3 -->
+    <path d="M 245 195 L 280 210 L 305 175 C 310 168 302 162 296 168 L 275 195 Z"/>
+
+    <!-- Arms Reach Upwards Toward Mastery -->
+    <path d="M 220 150 L 255 135 L 275 110 C 280 104 272 96 266 102 L 248 124 L 215 140 Z"/>
+    <path d="M 210 150 L 180 165 L 165 180 C 160 185 168 192 174 186 L 190 170 L 215 160 Z"/>
+  </g>
+
+  <!-- Mortarboard / Knowledge Cap Symbol at the Peak -->
+  <g transform="translate(385, 140) scale(0.95)" filter="url(#glow)">
+    <!-- Cap Rhombus -->
+    <polygon points="40,25 75,40 40,55 5,40" fill="url(#goldGrad)"/>
+    <!-- Cap Underneath Skullcap -->
+    <path d="M 20 47 Q 40 62 60 47 L 60 55 Q 40 70 20 55 Z" fill="#b45309"/>
+    <!-- Golden Tassel -->
+    <path d="M 40 40 Q 55 42 62 55 L 62 68" fill="none" stroke="#fef08a" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="62" cy="70" r="3" fill="#f59e0b"/>
+  </g>
+
+  <!-- Celebratory Knowledge Sparks / Radiance -->
+  <g fill="#f59e0b" filter="url(#glow)">
+    <!-- Spark 1 Top Right -->
+    <path d="M 450 65 Q 450 80 465 80 Q 450 80 450 95 Q 450 80 435 80 Q 450 80 450 65 Z"/>
+    <!-- Spark 2 Left Accent -->
+    <path d="M 85 240 Q 85 250 95 250 Q 85 250 85 260 Q 85 250 75 250 Q 85 250 85 240 Z" fill="#38bdf8"/>
+    <!-- Spark 3 Bottom Tiny -->
+    <circle cx="430" cy="220" r="4" fill="#a855f7"/>
+  </g>
+</svg>

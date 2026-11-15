@@ -1,11 +1,14 @@
 import Mainlayout from "./Mainlayout/mainlayout";
 import { AuthProvider } from "./context/AuthContext";
+import { RouterProvider } from "./router/Router";
 
 function App() {
   return (
-    <AuthProvider>
-      <Mainlayout/>
-    </AuthProvider>
+    <RouterProvider>
+      <AuthProvider>
+        <Mainlayout />
+      </AuthProvider>
+    </RouterProvider>
   );
 }
 

@@ -1,36 +1,70 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   ArrowRight,
+  MessageSquare,
+  Compass,
+  Calendar,
+  Award,
+  Settings as SettingsIcon,
+  User as UserIcon,
+  LogOut,
+  ChevronDown,
   Menu,
   X,
-  Home as HomeIcon,
-  HelpCircle,
-  Info,
-  LayoutDashboard,
-  Users,
-  Inbox,
-  MessageSquare,
-  LogOut,
   ChevronRight,
   Sparkles
-} from "lucide-react";
+} from 'lucide-react';
 import logo from "../../assets/logo.png";
+import { useNavigate, useLocation } from "../../router/Router";
+import { useAuth } from "../../context/AuthContext";
 import "./Navbar.css";
-function Navbar({
-  activePage,
-  setActivePage,
-  currentUser: propCurrentUser,
-  setCurrentUser,
-  onLogout
-}) {
-  const currentUser = propCurrentUser !== undefined ? propCurrentUser : false;
+
+function Navbar({ activePage, setActivePage }) {
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [showDropdown, setShowDropdown] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const pathname = location.pathname;
+
+  const publicLinks = [
+    { path: "/", label: "Home" },
+    { path: "/how-it-works", label: "How It Works" },
+    { path: "/about", label: "About" },
+  ];
+
+  const authLinks = [
+    { path: "/dashboard", label: "Dashboard" },
+    { path: "/discover", label: "Discover" },
+    { path: "/matches", label: "Matches" },
+    { path: "/requests", label: "Requests" },
+    { path: "/chat", label: "Chat" },
+    { path: "/sessions", label: "Sessions" },
+    { path: "/reviews", label: "Reviews" },
+  ];
+
+  const navLinks = currentUser ? authLinks : publicLinks;
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
-  }, [activePage]);
+    setShowDropdown(false);
+  }, [pathname, activePage]);
 
-  // Auto-close mobile menu if viewport resized to desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 860) {
@@ -41,18 +75,17 @@ function Navbar({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
         setIsMobileMenuOpen(false);
+        setShowDropdown(false);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Prevent background scroll when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -64,96 +97,126 @@ function Navbar({
     };
   }, [isMobileMenuOpen]);
 
-  const navLinks = currentUser
-    ? [
-      { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-        { id: "matches", label: "Matches", icon: Users },
-        { id: "request", label: "Request", icon: Inbox },
-        { id: "messages", label: "Messages", icon: MessageSquare }
-      ]
-    : [
-        { id: "home", label: "Home", icon: HomeIcon },
-        { id: "how-to-work", label: "How It Works", icon: HelpCircle },
-        { id: "about", label: "About", icon: Info }
-      ];
-  const handleNavClick = (id) => {
-    setActivePage(id);
+  const handleNav = (path) => {
+    navigate(path);
+    setShowDropdown(false);
     setIsMobileMenuOpen(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (setActivePage) {
+      setActivePage(path.replace('/', '') || 'home');
+    }
   };
 
-  const handleSignOut = () => {
-    if (onLogout) onLogout();
-    else if (setCurrentUser) setCurrentUser(null);
-    setActivePage("home");
+  const handleLogout = () => {
+    logout();
+    setShowDropdown(false);
     setIsMobileMenuOpen(false);
+    navigate('/');
+    if (setActivePage) setActivePage('home');
   };
 
   return (
     <header className="nav">
-      <div className="nav-container">
+      <div className="main">
         {/* Brand Logo */}
-        <div
-          onClick={() => handleNavClick("home")}
+        <div 
+          onClick={() => handleNav('/')}
           className="Mlogo"
           role="button"
           tabIndex={0}
-          title="Return to Skillor Home"
+          title="Skillor - Learn. Share. Grow."
         >
           <img src={logo} alt="Skillor Logo" className="logo" />
         </div>
 
-        {/* Desktop Nav Center (Hidden on <=860px) */}
         <nav className="nav-center" aria-label="Main Navigation">
           {navLinks.map((link) => {
-            const isActive = activePage === link.id;
+            const isActive =
+              pathname === link.path ||
+              (link.path !== '/' && pathname.startsWith(link.path));
             return (
               <button
-                key={link.id}
-                onClick={() => handleNavClick(link.id)}
-                className={`nav-link-btn ${isActive ? "active" : ""}`}
+                key={link.path}
                 type="button"
+                onClick={() => handleNav(link.path)}
+                className={`nav-link-btn ${isActive ? "active" : ""}`}
               >
                 <span className="nav-text">{link.label}</span>
-                {isActive && <span className="nav-link-active" />}
               </button>
             );
           })}
         </nav>
 
-        {/* Desktop Nav Right Actions (Hidden on <=860px) */}
         <div className="nav-right">
           {currentUser ? (
-            <div className="nav-user-container">
-              <div
-                className="nav-user-info"
-                onClick={() => handleNavClick("dashboard")}
-                title="Go to Dashboard"
+            <div className="nav-user-container" ref={dropdownRef}>
+              <div 
+                className={`nav-user-info ${showDropdown ? "open" : ""}`}
+                onClick={() => setShowDropdown(!showDropdown)}
                 role="button"
                 tabIndex={0}
+                title="Account menu"
               >
                 <span className="nav-user-avatar">
-                  {currentUser.name
-                    ? currentUser.name.charAt(0).toUpperCase()
-                    : "U"}
+                  {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : "U"}
                 </span>
-                <span className="nav-user-name">
-                  {currentUser.name || "Member"}
-                </span>
+                <span className="nav-user-name">{currentUser.name || "Member"}</span>
+                <ChevronDown size={14} className={`dropdown-chevron ${showDropdown ? "rotated" : ""}`} />
               </div>
-              <button
-                type="button"
-                className="nav-logout-btn"
-                onClick={handleSignOut}
-              >
-                Sign Out
-              </button>
+
+              {showDropdown && (
+                <div className="nav-dropdown-menu">
+                  <div className="dropdown-user-header">
+                    <strong>{currentUser.name || "Member"}</strong>
+                    <span>{currentUser.email || "Skillor Member"}</span>
+                  </div>
+
+                  <div className="dropdown-divider" />
+
+                  <button
+                    type="button"
+                    className="dropdown-item"
+                    onClick={() => handleNav(`/profile/${currentUser.id || 'usr_narendar'}`)}
+                  >
+                    <UserIcon size={16} className="item-icon icon-purple" />
+                    <span>My Profile</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="dropdown-item"
+                    onClick={() => handleNav('/profile/edit')}
+                  >
+                    <SettingsIcon size={16} className="item-icon icon-blue" />
+                    <span>Edit Profile</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="dropdown-item"
+                    onClick={() => handleNav('/dashboard')}
+                  >
+                    <Award size={16} className="item-icon icon-green" />
+                    <span>Dashboard</span>
+                  </button>
+
+                  <div className="dropdown-divider" />
+
+                  <button
+                    type="button"
+                    className="dropdown-item logout"
+                    onClick={handleLogout}
+                  >
+                    <LogOut size={16} className="item-icon icon-red" />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <div className="nav-ga">
               <button
                 type="button"
-                onClick={() => handleNavClick("login")}
+                onClick={() => handleNav('/login')}
                 className="login"
               >
                 Sign In
@@ -161,7 +224,7 @@ function Navbar({
 
               <button
                 type="button"
-                onClick={() => handleNavClick("signup")}
+                onClick={() => handleNav('/register')}
                 className="join-btn"
               >
                 <span>Join Skillor</span>
@@ -171,7 +234,6 @@ function Navbar({
           )}
         </div>
 
-        {/* Mobile Hamburger Toggle Button (Visible only on <=860px) */}
         <button
           type="button"
           className="nav-mobile-toggle"
@@ -183,7 +245,6 @@ function Navbar({
         </button>
       </div>
 
-      {/* Mobile Drawer Backdrop */}
       {isMobileMenuOpen && (
         <div
           className="nav-mobile-backdrop"
@@ -192,14 +253,13 @@ function Navbar({
         />
       )}
 
-      {/* Mobile Navigation Drawer */}
       <aside
         className={`nav-mobile-drawer ${isMobileMenuOpen ? "open" : ""}`}
         aria-label="Mobile Navigation Menu"
       >
         <div className="nav-mobile-drawer-header">
           <div
-            onClick={() => handleNavClick("home")}
+            onClick={() => handleNav('/')}
             className="nav-mobile-drawer-logo"
             role="button"
             tabIndex={0}
@@ -216,57 +276,46 @@ function Navbar({
           </button>
         </div>
 
-        {/* User Card if logged in */}
         {currentUser && (
           <div className="nav-mobile-user-card">
             <span className="mobile-user-avatar">
-              {currentUser.name
-                ? currentUser.name.charAt(0).toUpperCase()
-                : "U"}
+              {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : "U"}
             </span>
             <div className="mobile-user-details">
-              <span className="mobile-user-name">
-                {currentUser.name || "Skillor Member"}
-              </span>
-              <span className="mobile-user-role">
-                {currentUser.email || "Peer Learner & Mentor"}
-              </span>
+              <span className="mobile-user-name">{currentUser.name || "Skillor Member"}</span>
+              <span className="mobile-user-role">{currentUser.email || "Member"}</span>
             </div>
           </div>
         )}
 
-        {/* Mobile Nav Links */}
         <nav className="nav-mobile-links">
           <span className="nav-mobile-section-label">
-            {currentUser ? "YOUR WORKSPACE" : "NAVIGATION"}
+            {currentUser ? "WORKSPACE" : "NAVIGATION"}
           </span>
           {navLinks.map((link) => {
-            const Icon = link.icon;
-            const isActive = activePage === link.id;
+            const isActive =
+              pathname === link.path ||
+              (link.path !== '/' && pathname.startsWith(link.path));
             return (
               <button
-                key={link.id}
+                key={link.path}
                 type="button"
                 className={`nav-mobile-link-btn ${isActive ? "active" : ""}`}
-                onClick={() => handleNavClick(link.id)}
+                onClick={() => handleNav(link.path)}
               >
-                <div className="mobile-link-left">
-                  {Icon && <Icon size={18} className="mobile-link-icon" />}
-                  <span>{link.label}</span>
-                </div>
+                <span>{link.label}</span>
                 <ChevronRight size={16} className="mobile-link-chevron" />
               </button>
             );
           })}
         </nav>
 
-        {/* Mobile Auth Actions Footer */}
         <div className="nav-mobile-actions">
           {currentUser ? (
             <button
               type="button"
               className="nav-mobile-logout-btn"
-              onClick={handleSignOut}
+              onClick={handleLogout}
             >
               <LogOut size={16} />
               <span>Sign Out</span>
@@ -276,7 +325,7 @@ function Navbar({
               <button
                 type="button"
                 className="nav-mobile-join-btn"
-                onClick={() => handleNavClick("signup")}
+                onClick={() => handleNav('/register')}
               >
                 <span>Join Skillor</span>
                 <ArrowRight size={16} />
@@ -284,7 +333,7 @@ function Navbar({
               <button
                 type="button"
                 className="nav-mobile-signin-btn"
-                onClick={() => handleNavClick("login")}
+                onClick={() => handleNav('/login')}
               >
                 Sign In
               </button>

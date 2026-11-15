@@ -9,20 +9,43 @@ import Matches from "../pages/Matches";
 import Request from "../pages/Request";
 import Messages from "../pages/Messages";
 import Login from "../pages/Login";
+import Discover from "../pages/Discover";
+import Profile from "../pages/Profile";
+import EditProfile from "../pages/EditProfile";
+import SkillDetails from "../pages/SkillDetails";
 import { useAuth } from "../context/AuthContext";
+import { useLocation, matchRoute } from "../router/Router";
 
 function Mainlayout() {
+    const { pathname } = useLocation();
     const [activePage, setActivePage] = useState("home");
     const { currentUser, setCurrentUser, logout } = useAuth();
-    if (activePage === "login" || activePage === "signup") {
+
+    const route = pathname || "/";
+
+    const isAuthRoute =
+        (route === "/login" ||
+        route === "/register" ||
+        route === "/signup" ||
+        activePage === "login" ||
+        activePage === "signup");
+
+    if (
+        isAuthRoute &&
+        activePage !== "dashboard" &&
+        route !== "/dashboard"
+    ) {
         return (
             <Login
-                initialMode={activePage === "signup" ? "signup" : "signin"}
+                initialMode={route === "/register" || activePage === "signup" ? "signup" : "signin"}
                 setActivePage={setActivePage}
                 setCurrentUser={setCurrentUser}
             />
         );
     }
+
+    const profileMatch = matchRoute("/profile/:id", route);
+    const skillMatch = matchRoute("/skill/:id", route);
 
     return (
         <div className="main-layout">
@@ -34,19 +57,29 @@ function Mainlayout() {
                 onLogout={logout}
             />
             <main className="main-content">
-                {activePage === "home" && <Home setActivePage={setActivePage} />}
-
-                {activePage === "how-to-work" && <HowToWork setActivePage={setActivePage} />}
-
-                {activePage === "about" && <About setActivePage={setActivePage} />}
-
-                {activePage === "dashboard" && <Dashboard setActivePage={setActivePage} />}
-
-                {activePage === "matches" && <Matches setActivePage={setActivePage} />}
-
-                {activePage === "request" && <Request setActivePage={setActivePage} />}
-
-                {activePage === "messages" && <Messages setActivePage={setActivePage} />}
+                {route === "/profile/edit" ? (
+                    <EditProfile />
+                ) : profileMatch.matches && profileMatch.params.id ? (
+                    <Profile userId={profileMatch.params.id} setActivePage={setActivePage} />
+                ) : skillMatch.matches && skillMatch.params.id ? (
+                    <SkillDetails skillId={skillMatch.params.id} />
+                ) : (route === "/discover" || activePage === "discover") ? (
+                    <Discover />
+                ) : (route === "/dashboard" || activePage === "dashboard") ? (
+                    <Dashboard setActivePage={setActivePage} />
+                ) : (route === "/matches" || activePage === "matches") ? (
+                    <Matches setActivePage={setActivePage} />
+                ) : (route === "/requests" || route === "/request" || activePage === "request" || activePage === "requests") ? (
+                    <Request setActivePage={setActivePage} />
+                ) : (route === "/chat" || route === "/messages" || activePage === "messages" || activePage === "chat") ? (
+                    <Messages setActivePage={setActivePage} />
+                ) : (route === "/how-it-works" || activePage === "how-to-work") ? (
+                    <HowToWork setActivePage={setActivePage} />
+                ) : (route === "/about" || activePage === "about") ? (
+                    <About setActivePage={setActivePage} />
+                ) : (
+                    <Home setActivePage={setActivePage} />
+                )}
             </main>
             <Footer setActivePage={setActivePage} />
         </div>

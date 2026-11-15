@@ -44,7 +44,18 @@ export function RouterProvider({ children }) {
 export function useRouter() {
   const ctx = useContext(RouterContext);
   if (!ctx) {
-    throw new Error('useRouter must be used within a RouterProvider');
+    return {
+      currentPath: typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/',
+      navigate: (to, options = {}) => {
+        if (!to || typeof window === 'undefined') return;
+        if (options.replace) {
+          window.history.replaceState({}, '', to);
+        } else {
+          window.history.pushState({}, '', to);
+        }
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      },
+    };
   }
   return ctx;
 }

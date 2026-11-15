@@ -20,6 +20,8 @@ import {
 import logo from "../assets/logo.png";
 import logoLight from "../assets/logo-light.png";
 import loginBg from "../assets/login_bg.png";
+import { useNavigate } from "../router/Router";
+import { useAuth } from "../context/AuthContext";
 import "./Login.css";
 
 export default function Login({
@@ -27,6 +29,8 @@ export default function Login({
   setActivePage,
   setCurrentUser,
 }) {
+  const navigate = useNavigate();
+  const { setCurrentUser: setAuthUser } = useAuth() || {};
   const [mode, setMode] = useState(initialMode); // 'signin' | 'signup'
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -118,14 +122,24 @@ export default function Login({
 
     setTimeout(() => {
       setIsLoading(false);
+      const userName = formData.name.trim() || (mode === "signin" ? (formData.email.split("@")[0]) : "Skillor Member");
       const authenticatedUser = {
-        name: formData.name.trim() || (mode === "signin" ? (formData.email.split("@")[0]) : "Skillor Member"),
+        id: "usr_" + Date.now(),
+        name: userName,
+        username: userName.toLowerCase().replace(/\s+/g, "_"),
         email: formData.email.trim(),
         role: "Skill Trader",
+        avatar: userName.slice(0, 2).toUpperCase(),
         teachSkill: formData.teachSkill || "React.js",
         learnSkill: formData.learnSkill || "UI/UX Design",
+        teaches: formData.teachSkill ? [formData.teachSkill] : ["React.js", "JavaScript"],
+        wants: formData.learnSkill ? [formData.learnSkill] : ["UI/UX Design", "Figma"],
       };
 
+      if (setAuthUser) {
+        setAuthUser(authenticatedUser);
+      }
+      localStorage.setItem('skillor_user', JSON.stringify(authenticatedUser));
       if (setCurrentUser) {
         setCurrentUser(authenticatedUser);
       }
@@ -140,8 +154,9 @@ export default function Login({
         if (setActivePage) {
           setActivePage("dashboard");
         }
-      }, 1000);
-    }, 900);
+        navigate("/dashboard");
+      }, 500);
+    }, 600);
   };
 
   const handleForgotSubmit = (e) => {
@@ -169,7 +184,10 @@ export default function Login({
       <header className="glass-topbar">
         <div
           className="glass-topbar-logo"
-          onClick={() => setActivePage && setActivePage("home")}
+          onClick={() => {
+            if (setActivePage) setActivePage("home");
+            navigate("/");
+          }}
           role="button"
           tabIndex={0}
           title="Return to Skillor Home"
@@ -181,7 +199,10 @@ export default function Login({
           <button
             type="button"
             className="glass-back-btn"
-            onClick={() => setActivePage && setActivePage("home")}
+            onClick={() => {
+              if (setActivePage) setActivePage("home");
+              navigate("/");
+            }}
           >
             <ArrowLeft size={16} />
             <span>Back to Home</span>
@@ -607,21 +628,30 @@ export default function Login({
         </p>
         <div className="glass-footer-links">
           <span
-            onClick={() => setActivePage && setActivePage("about")}
+            onClick={() => {
+              if (setActivePage) setActivePage("about");
+              navigate("/about");
+            }}
             className="glass-f-link"
           >
             About
           </span>
           <span className="dot-sep">•</span>
           <span
-            onClick={() => setActivePage && setActivePage("how-to-work")}
+            onClick={() => {
+              if (setActivePage) setActivePage("how-to-work");
+              navigate("/how-it-works");
+            }}
             className="glass-f-link"
           >
             How It Works
           </span>
           <span className="dot-sep">•</span>
           <span
-            onClick={() => setActivePage && setActivePage("home")}
+            onClick={() => {
+              if (setActivePage) setActivePage("home");
+              navigate("/");
+            }}
             className="glass-f-link"
           >
             Explore Skills
