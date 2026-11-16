@@ -9,9 +9,11 @@ import Matches from "../pages/Matches";
 import Request from "../pages/Request";
 import Messages from "../pages/Messages";
 import Login from "../pages/Login";
-import Sessions from "../pages/Sessions";
 import Discover from "../pages/Discover";
-// import Reviews from "../pages/Reviews";
+import Sessions from "../pages/Sessions";
+import Profile from "../pages/Profile";
+import EditProfile from "../pages/EditProfile";
+import SkillDetails from "../pages/SkillDetails";
 import { useAuth } from "../context/AuthContext";
 import { useLocation } from "../router/Router";
 
