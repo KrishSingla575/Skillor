@@ -43,6 +43,7 @@ function Navbar({ activePage, setActivePage }) {
     { path: "/chat", label: "Chat" },
     { path: "/sessions", label: "Sessions" },
     { path: "/reviews", label: "Reviews" },
+    { path: "/sessions", label: "Sessions" }
   ];
 
   const navLinks = currentUser ? authLinks : publicLinks;

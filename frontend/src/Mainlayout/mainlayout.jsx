@@ -7,6 +7,7 @@ import Footer from "../components/layout/Footer";
 import Dashboard from "../pages/Dashboard";
 import Matches from "../pages/Matches";
 import Request from "../pages/Request";
+import Sessions from "../pages/Sessions";
 import Messages from "../pages/Messages";
 import Login from "../pages/Login";
 import Discover from "../pages/Discover";
@@ -57,29 +58,19 @@ function Mainlayout() {
                 onLogout={logout}
             />
             <main className="main-content">
-                {route === "/profile/edit" ? (
-                    <EditProfile />
-                ) : profileMatch.matches && profileMatch.params.id ? (
-                    <Profile userId={profileMatch.params.id} setActivePage={setActivePage} />
-                ) : skillMatch.matches && skillMatch.params.id ? (
-                    <SkillDetails skillId={skillMatch.params.id} />
-                ) : (route === "/discover" || activePage === "discover") ? (
-                    <Discover />
-                ) : (route === "/dashboard" || activePage === "dashboard") ? (
-                    <Dashboard setActivePage={setActivePage} />
-                ) : (route === "/matches" || activePage === "matches") ? (
-                    <Matches setActivePage={setActivePage} />
-                ) : (route === "/requests" || route === "/request" || activePage === "request" || activePage === "requests") ? (
-                    <Request setActivePage={setActivePage} />
-                ) : (route === "/chat" || route === "/messages" || activePage === "messages" || activePage === "chat") ? (
-                    <Messages setActivePage={setActivePage} />
-                ) : (route === "/how-it-works" || activePage === "how-to-work") ? (
-                    <HowToWork setActivePage={setActivePage} />
-                ) : (route === "/about" || activePage === "about") ? (
-                    <About setActivePage={setActivePage} />
-                ) : (
-                    <Home setActivePage={setActivePage} />
-                )}
+                {activePage === "home" && <Home setActivePage={setActivePage} />}
+
+                {activePage === "how-to-work" && <HowToWork setActivePage={setActivePage} />}
+
+                {activePage === "about" && <About setActivePage={setActivePage} />}
+
+                {activePage === "dashboard" && <Dashboard setActivePage={setActivePage} />}
+
+                {activePage === "matches" && <Matches setActivePage={setActivePage} />}
+
+                {activePage === "request" && <Request setActivePage={setActivePage} />}
+
+                {activePage === "messages" && <Messages setActivePage={setActivePage} />}
             </main>
             <Footer setActivePage={setActivePage} />
         </div>
