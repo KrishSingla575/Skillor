@@ -10,6 +10,8 @@ import Request from "../pages/Request";
 import Messages from "../pages/Messages";
 import Login from "../pages/Login";
 import Sessions from "../pages/Sessions";
+import Discover from "../pages/Discover";
+// import Reviews from "../pages/Reviews";
 import { useAuth } from "../context/AuthContext";
 import { useLocation } from "../router/Router";
 
@@ -73,13 +75,15 @@ function Mainlayout() {
 
                 {activePage === "dashboard" && <Dashboard setActivePage={setActivePage} />}
 
+                {activePage === "discover" && <Discover setActivePage={setActivePage} />}
+
                 {activePage === "matches" && <Matches setActivePage={setActivePage} />}
 
                 {activePage === "request" && <Request setActivePage={setActivePage} />}
 
-                {activePage === "sessions" && <Sessions setActivePage={setActivePage} />}
-
                 {activePage === "messages" && <Messages setActivePage={setActivePage} />}
+
+                {activePage === "sessions" && <Sessions setActivePage={setActivePage} />}
             </main>
             <Footer setActivePage={setActivePage} />
         </div>
