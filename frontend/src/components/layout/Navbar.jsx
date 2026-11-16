@@ -11,6 +11,7 @@ import {
   ChevronDown,
   Menu,
   X,
+  CalendarDays,
   ChevronRight,
   Sparkles
 } from 'lucide-react';
@@ -41,9 +42,8 @@ function Navbar({ activePage, setActivePage }) {
     { path: "/matches", label: "Matches" },
     { path: "/requests", label: "Requests" },
     { path: "/chat", label: "Chat" },
-    { path: "/sessions", label: "Sessions" },
+    { path: "/sessions", label: "Sessions", icon: CalendarDays },
     { path: "/reviews", label: "Reviews" },
-    { path: "/sessions", label: "Sessions" }
   ];
 
   const navLinks = currentUser ? authLinks : publicLinks;

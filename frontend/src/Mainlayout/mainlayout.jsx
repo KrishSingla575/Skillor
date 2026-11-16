@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/layout/Navbar";
 import Home from "../pages/Home";
 import HowToWork from "../pages/Howitwork";
@@ -7,53 +7,60 @@ import Footer from "../components/layout/Footer";
 import Dashboard from "../pages/Dashboard";
 import Matches from "../pages/Matches";
 import Request from "../pages/Request";
-import Sessions from "../pages/Sessions";
 import Messages from "../pages/Messages";
 import Login from "../pages/Login";
-import Discover from "../pages/Discover";
-import Profile from "../pages/Profile";
-import EditProfile from "../pages/EditProfile";
-import SkillDetails from "../pages/SkillDetails";
+import Sessions from "../pages/Sessions";
 import { useAuth } from "../context/AuthContext";
-import { useLocation, matchRoute } from "../router/Router";
+import { useLocation } from "../router/Router";
+
+const routeToPage = {
+    "/": "home",
+    "/home": "home",
+    "/how-it-works": "how-to-work",
+    "/about": "about",
+    "/dashboard": "dashboard",
+    "/discover": "discover",
+    "/matches": "matches",
+    "/requests": "request",
+    "/sessions": "sessions",
+    "/chat": "messages",
+    "/reviews": "reviews",
+    "/login": "login",
+    "/register": "signup",
+};
+
+function pageFromPath(pathname) {
+    const clean = (pathname || "/").split("?")[0].split("#")[0];
+    return routeToPage[clean] || "home";
+}
 
 function Mainlayout() {
-    const { pathname } = useLocation();
-    const [activePage, setActivePage] = useState("home");
-    const { currentUser, setCurrentUser, logout } = useAuth();
+    const location = useLocation();
+    const [activePage, setActivePage] = useState(() =>
+        pageFromPath(location.pathname)
+    );
+    const { setCurrentUser, logout } = useAuth();
 
-    const route = pathname || "/";
+    // Keep the rendered page in sync with the URL (navbar links, back button, etc.)
+    useEffect(() => {
+        setActivePage(pageFromPath(location.pathname));
+    }, [location.pathname]);
 
-    const isAuthRoute =
-        (route === "/login" ||
-        route === "/register" ||
-        route === "/signup" ||
-        activePage === "login" ||
-        activePage === "signup");
-
-    if (
-        isAuthRoute &&
-        activePage !== "dashboard" &&
-        route !== "/dashboard"
-    ) {
+    if (activePage === "login" || activePage === "signup") {
         return (
             <Login
-                initialMode={route === "/register" || activePage === "signup" ? "signup" : "signin"}
+                initialMode={activePage === "signup" ? "signup" : "signin"}
                 setActivePage={setActivePage}
                 setCurrentUser={setCurrentUser}
             />
         );
     }
 
-    const profileMatch = matchRoute("/profile/:id", route);
-    const skillMatch = matchRoute("/skill/:id", route);
-
     return (
         <div className="main-layout">
             <Navbar
                 activePage={activePage}
                 setActivePage={setActivePage}
-                currentUser={currentUser}
                 setCurrentUser={setCurrentUser}
                 onLogout={logout}
             />
@@ -69,6 +76,8 @@ function Mainlayout() {
                 {activePage === "matches" && <Matches setActivePage={setActivePage} />}
 
                 {activePage === "request" && <Request setActivePage={setActivePage} />}
+
+                {activePage === "sessions" && <Sessions setActivePage={setActivePage} />}
 
                 {activePage === "messages" && <Messages setActivePage={setActivePage} />}
             </main>
