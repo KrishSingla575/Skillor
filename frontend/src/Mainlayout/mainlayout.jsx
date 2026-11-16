@@ -7,6 +7,7 @@ import Footer from "../components/layout/Footer";
 import Dashboard from "../pages/Dashboard";
 import Matches from "../pages/Matches";
 import Request from "../pages/Request";
+import Sessions from "../pages/Sessions";
 import Messages from "../pages/Messages";
 import Login from "../pages/Login";
 import { useAuth } from "../context/AuthContext";
@@ -47,6 +48,8 @@ function Mainlayout() {
                 {activePage === "request" && <Request setActivePage={setActivePage} />}
 
                 {activePage === "messages" && <Messages setActivePage={setActivePage} />}
+
+                {activePage === "sessions" && <Sessions setActivePage={setActivePage} />}
             </main>
             <Footer setActivePage={setActivePage} />
         </div>

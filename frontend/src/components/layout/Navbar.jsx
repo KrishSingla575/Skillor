@@ -10,6 +10,7 @@ import {
   Users,
   Inbox,
   MessageSquare,
+  CalendarDays,
   LogOut,
   ChevronRight,
   Sparkles
@@ -69,7 +70,8 @@ function Navbar({
       { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
         { id: "matches", label: "Matches", icon: Users },
         { id: "request", label: "Request", icon: Inbox },
-        { id: "messages", label: "Messages", icon: MessageSquare }
+        { id: "messages", label: "Messages", icon: MessageSquare },
+        { id: "sessions", label: "Sessions", icon: CalendarDays }
       ]
     : [
         { id: "home", label: "Home", icon: HomeIcon },
