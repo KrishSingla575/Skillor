@@ -11,8 +11,10 @@ import Messages from "../pages/Messages";
 import Login from "../pages/Login";
 import Discover from "../pages/Discover";
 import Sessions from "../pages/Sessions";
+import Reviews from "../pages/Reviews";
 import Profile from "../pages/Profile";
 import EditProfile from "../pages/EditProfile";
+import Settings from "../pages/Settings";
 import SkillDetails from "../pages/SkillDetails";
 import { useAuth } from "../context/AuthContext";
 import { useLocation } from "../router/Router";
@@ -29,13 +31,17 @@ const routeToPage = {
     "/sessions": "sessions",
     "/chat": "messages",
     "/reviews": "reviews",
+    "/settings": "settings",
+    "/profile/edit": "edit-profile",
     "/login": "login",
     "/register": "signup",
 };
 
 function pageFromPath(pathname) {
     const clean = (pathname || "/").split("?")[0].split("#")[0];
-    return routeToPage[clean] || "home";
+    if (routeToPage[clean]) return routeToPage[clean];
+    if (clean.startsWith("/profile/")) return "profile";
+    return "home";
 }
 
 function Mainlayout() {
@@ -86,6 +92,16 @@ function Mainlayout() {
                 {activePage === "messages" && <Messages setActivePage={setActivePage} />}
 
                 {activePage === "sessions" && <Sessions setActivePage={setActivePage} />}
+
+                {activePage === "reviews" && <Reviews setActivePage={setActivePage} />}
+
+                {activePage === "settings" && <Settings />}
+
+                {activePage === "edit-profile" && <EditProfile />}
+
+                {activePage === "profile" && (
+                    <Profile userId={decodeURIComponent(location.pathname.slice("/profile/".length))} />
+                )}
             </main>
             <Footer setActivePage={setActivePage} />
         </div>

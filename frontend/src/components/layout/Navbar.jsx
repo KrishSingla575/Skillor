@@ -4,7 +4,6 @@ import {
   MessageSquare,
   Compass,
   Calendar,
-  Award,
   Settings as SettingsIcon,
   User as UserIcon,
   LogOut,
@@ -102,8 +101,18 @@ function Navbar({ activePage, setActivePage }) {
     navigate(path);
     setShowDropdown(false);
     setIsMobileMenuOpen(false);
+
     if (setActivePage) {
-      setActivePage(path.replace('/', '') || 'home');
+      // Map complex paths to the internal page IDs used in Mainlayout
+      if (path === '/profile/edit') {
+        setActivePage('edit-profile');
+      } else if (path === '/settings') {
+        setActivePage('settings');
+      } else if (path.startsWith('/profile/')) {
+        setActivePage('profile');
+      } else {
+        setActivePage(path.replace('/', '') || 'home');
+      }
     }
   };
 
@@ -194,10 +203,10 @@ function Navbar({ activePage, setActivePage }) {
                   <button
                     type="button"
                     className="dropdown-item"
-                    onClick={() => handleNav('/dashboard')}
+                    onClick={() => handleNav('/settings')}
                   >
-                    <Award size={16} className="item-icon icon-green" />
-                    <span>Dashboard</span>
+                    <SettingsIcon size={16} className="item-icon icon-green" />
+                    <span>Settings</span>
                   </button>
 
                   <div className="dropdown-divider" />
