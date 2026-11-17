@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { api } from '../services/api';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from '../router/Router';
+import './Profile.css';
 import {
   ArrowLeft,
   Star,
@@ -15,16 +19,9 @@ import {
   Award
 } from 'lucide-react';
 
-
-
-import './Profile.css';
-
-export default function Profile({ userId, openChat, setActivePage }) {
-  const navigate = (path) => {
-    if (path === '/discover') setActivePage?.('matches');
-    else if (path === '/chat') setActivePage?.('dashboard');
-  };
-  const currentUser = null;
+export default function Profile({ userId, openChat }) {
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [toastMsg, setToastMsg] = useState('');
@@ -41,13 +38,29 @@ export default function Profile({ userId, openChat, setActivePage }) {
     async function fetchUser() {
       setLoading(true);
       try {
-        const idToFetch = userId || (currentUser ? currentUser.id : 'usr_priya');
+        const idToFetch = userId || currentUser?.id;
+
+        // Fallback to current user if viewing own profile
+        if (currentUser && (!userId || String(userId) === String(currentUser.id))) {
+          setUser(currentUser);
+          setProposal({
+            offered: currentUser.wants?.[0]?.skillName || currentUser.wants?.[0] || 'React',
+            requested: currentUser.teaches?.[0]?.skillName || currentUser.teaches?.[0] || 'UI/UX Design',
+            message: `Hi ${currentUser.name}! I would love to connect and exchange complementary skills with you.`,
+          });
+        }
+
+        if (!idToFetch) {
+          if (!currentUser) setUser(null);
+          return;
+        }
+
         const res = await api.users.getUserById(idToFetch);
         if (res.success && res.user) {
           setUser(res.user);
           setProposal({
-            offered: res.user.wants?.[0]?.skillName || 'React',
-            requested: res.user.teaches?.[0]?.skillName || 'UI/UX Design',
+            offered: res.user.wants?.[0]?.skillName || res.user.wants?.[0] || 'React',
+            requested: res.user.teaches?.[0]?.skillName || res.user.teaches?.[0] || 'UI/UX Design',
             message: `Hi ${res.user.name}! I would love to connect and exchange complementary skills with you.`,
           });
         }
